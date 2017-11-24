@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `/home/stefan/coding/rust/persistentcache-rs/src/lib.rs`.">
+    <meta name="description" content="Source to the Rust file `src/lib.rs`.">
     <meta name="keywords" content="rust, rustlang, rust-lang">
 
     <title>lib.rs.html -- source</title>
@@ -356,6 +356,8 @@
 <span id="311">311</span>
 <span id="312">312</span>
 <span id="313">313</span>
+<span id="314">314</span>
+<span id="315">315</span>
 </pre><pre class="rust ">
 <span class="doccomment">//! Macros for persistently caching function calls</span>
 <span class="doccomment">//!</span>
@@ -497,6 +499,8 @@
 <span class="doccomment">//! cargo test --features clippy -- --test-threads=1</span>
 <span class="doccomment">//! ```</span>
 <span class="doccomment">//!</span>
+<span class="doccomment">//! A Redis server needs to be running and listening at `127.0.0.1` for the tests to work.</span>
+<span class="doccomment">//!</span>
 <span class="doccomment">//! # History</span>
 <span class="doccomment">//!</span>
 <span class="doccomment">//! This crate is inspired by [owls-cache](https://github.com/havoc-io/owls-cache) and its primary</span>
@@ -583,7 +587,7 @@
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">test_func</span>() {
-        <span class="kw">let</span> <span class="ident">s</span> <span class="op">=</span> <span class="ident">FileStorage</span>::<span class="ident">new</span>(<span class="string">&quot;test&quot;</span>).<span class="ident">unwrap</span>();
+        <span class="kw">let</span> <span class="ident">s</span> <span class="op">=</span> <span class="ident">FileStorage</span>::<span class="ident">new</span>(<span class="string">&quot;file_test&quot;</span>).<span class="ident">unwrap</span>();
         <span class="ident">s</span>.<span class="ident">flush</span>().<span class="ident">unwrap</span>();
         <span class="macro">cache_func</span><span class="macro">!</span>(<span class="ident">File</span>, <span class="string">&quot;test&quot;</span>, 
             <span class="kw">fn</span> <span class="ident">add_two</span>(<span class="ident">n</span>: <span class="ident">u64</span>) <span class="op">-&gt;</span> <span class="ident">u64</span> {
