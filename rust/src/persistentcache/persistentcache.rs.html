@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `src/persistentcache.rs`.">
+    <meta name="description" content="Source to the Rust file `/home/stefan/coding/rust/persistentcache-rs/src/persistentcache.rs`.">
     <meta name="keywords" content="rust, rustlang, rust-lang">
 
     <title>persistentcache.rs.html -- source</title>
@@ -182,7 +182,7 @@
     };
     <span class="comment">// internal</span>
     (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">f</span>:<span class="ident">ident</span>($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">x</span>:<span class="ident">ident</span>),<span class="kw-2">*</span>), <span class="macro-nonterminal">$</span><span class="macro-nonterminal">b</span>:<span class="ident">block</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">prefix</span>:<span class="ident">expr</span>) <span class="op">=&gt;</span> {
-        <span class="kw">extern</span> <span class="kw">crate</span> <span class="ident">bincode</span>;
+        <span class="kw">use</span> <span class="ident">bincode</span>;
         <span class="kw">use</span> ::<span class="ident">std</span>::<span class="ident">hash</span>::{<span class="ident">Hash</span>, <span class="ident">Hasher</span>};
 
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">s</span> <span class="op">=</span> ::<span class="ident">std</span>::<span class="ident">collections</span>::<span class="ident">hash_map</span>::<span class="ident">DefaultHasher</span>::<span class="ident">new</span>();
@@ -214,7 +214,7 @@
     (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">storage</span>:<span class="ident">ident</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">func</span>:<span class="ident">ident</span>($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">x</span>:<span class="ident">expr</span>),<span class="kw-2">*</span>), <span class="macro-nonterminal">$</span><span class="macro-nonterminal">prefix</span>:<span class="ident">expr</span>) <span class="op">=&gt;</span> {
         <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">redundant_closure_call</span>)]</span>
         (<span class="op">||</span>{
-            <span class="kw">extern</span> <span class="kw">crate</span> <span class="ident">bincode</span>;
+            <span class="kw">use</span> <span class="ident">bincode</span>;
             <span class="kw">use</span> ::<span class="ident">std</span>::<span class="ident">hash</span>::{<span class="ident">Hash</span>, <span class="ident">Hasher</span>};
 
             <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">s</span> <span class="op">=</span> ::<span class="ident">std</span>::<span class="ident">collections</span>::<span class="ident">hash_map</span>::<span class="ident">DefaultHasher</span>::<span class="ident">new</span>();

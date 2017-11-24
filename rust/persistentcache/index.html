@@ -48,8 +48,8 @@
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a class='srclink' href='../src/persistentcache/lib.rs.html#1-291' title='goto source code'>[src]</a></span></h1>
-<div class='docblock'><p>Macros for persistently caching function calls or entire functions.</p>
+               </span><a class='srclink' href='../src/persistentcache/lib.rs.html#1-313' title='goto source code'>[src]</a></span></h1>
+<div class='docblock'><p>Macros for persistently caching function calls</p>
 
 <p>The values are cached either in files or on Redis. Two storages, <code>FileStorage</code> and <code>RedisStorage</code>
 are provided.
@@ -62,6 +62,15 @@ persistent (stored on disk) and can be shared between different threads and proc
 All Parameters to the function need to be Hashable. The return value needs to be serializeable
 by the crate <code>bincode</code>.</p>
 
+<h1 id='setup' class='section-header'><a href='#setup'>Setup</a></h1>
+<p>Add the following dependencies to your projet:</p>
+
+<pre><code class="language-text">[dependencies]
+lazy_static = &quot;*&quot;
+bincode = &quot;*&quot;
+persistentcache = &quot;*&quot;
+</code></pre>
+
 <h1 id='caching-function-calls-with-cache' class='section-header'><a href='#caching-function-calls-with-cache'>Caching function calls with <code>cache!</code></a></h1>
 <p>The macro <code>cache!</code> caches a function call. The advantage of this approach over the macro
 <code>cache_func</code> is that different storages can be used for different calls. Furthermore the
@@ -72,6 +81,8 @@ The macro expects the function to return a value of type <code>Result&lt;T, Box&
 
 <h2 id='example' class='section-header'><a href='#example'>Example</a></h2>
 <pre class="rust rust-example-rendered">
+<span class="attribute">#![<span class="ident">allow</span>(<span class="ident">redundant_closure_call</span>)]</span>
+<span class="kw">extern</span> <span class="kw">crate</span> <span class="ident">bincode</span>;
 <span class="attribute">#[<span class="ident">macro_use</span>]</span> <span class="kw">extern</span> <span class="kw">crate</span> <span class="ident">persistentcache</span>;
 <span class="kw">use</span> <span class="ident">persistentcache</span>::<span class="kw-2">*</span>;
 
@@ -118,6 +129,7 @@ as the initial function definition.</p>
 <pre class="rust rust-example-rendered">
 <span class="attribute">#[<span class="ident">macro_use</span>]</span> <span class="kw">extern</span> <span class="kw">crate</span> <span class="ident">lazy_static</span>;
 <span class="attribute">#[<span class="ident">macro_use</span>]</span> <span class="kw">extern</span> <span class="kw">crate</span> <span class="ident">persistentcache</span>;
+<span class="kw">extern</span> <span class="kw">crate</span> <span class="ident">bincode</span>;
 <span class="kw">use</span> <span class="ident">persistentcache</span>::<span class="kw-2">*</span>;
 
 <span class="comment">// Either store it in a `FileStorage`...</span>
@@ -157,6 +169,12 @@ Calculating 3 + 2...
 
 <h1 id='implementing-other-storages' class='section-header'><a href='#implementing-other-storages'>Implementing other storages</a></h1>
 <p>Storages need to implement the <code>PersistentCache</code> trait.</p>
+
+<h1 id='running-the-tests' class='section-header'><a href='#running-the-tests'>Running the tests</a></h1>
+<p>The tests should be run in a single thread because the Storages are regularly flushed.</p>
+
+<pre><code class="language-bash">cargo test --features clippy -- --test-threads=1
+</code></pre>
 
 <h1 id='history' class='section-header'><a href='#history'>History</a></h1>
 <p>This crate is inspired by <a href="https://github.com/havoc-io/owls-cache">owls-cache</a> and its primary
