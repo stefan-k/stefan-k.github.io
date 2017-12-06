@@ -146,6 +146,7 @@
 <span class="doccomment">//! Implementation of the macros `cache!` and `cache_func!`.</span>
 <span class="kw">use</span> <span class="ident">PREFIX</span>;
 <span class="kw">use</span> <span class="ident">PersistentCache</span>;
+<span class="kw">use</span> <span class="ident">errors</span>::<span class="kw-2">*</span>;
 
 <span class="doccomment">/// Cache an entire function.</span>
 <span class="attribute">#[<span class="ident">macro_export</span>]</span>
@@ -212,7 +213,6 @@
     };
     <span class="comment">// prefix provided</span>
     (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">storage</span>:<span class="ident">ident</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">func</span>:<span class="ident">ident</span>($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">x</span>:<span class="ident">expr</span>),<span class="kw-2">*</span>), <span class="macro-nonterminal">$</span><span class="macro-nonterminal">prefix</span>:<span class="ident">expr</span>) <span class="op">=&gt;</span> {
-        <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">redundant_closure_call</span>)]</span>
         (<span class="op">||</span>{
             <span class="kw">use</span> <span class="ident">bincode</span>;
             <span class="kw">use</span> ::<span class="ident">std</span>::<span class="ident">hash</span>::{<span class="ident">Hash</span>, <span class="ident">Hasher</span>};

@@ -358,6 +358,26 @@
 <span id="313">313</span>
 <span id="314">314</span>
 <span id="315">315</span>
+<span id="316">316</span>
+<span id="317">317</span>
+<span id="318">318</span>
+<span id="319">319</span>
+<span id="320">320</span>
+<span id="321">321</span>
+<span id="322">322</span>
+<span id="323">323</span>
+<span id="324">324</span>
+<span id="325">325</span>
+<span id="326">326</span>
+<span id="327">327</span>
+<span id="328">328</span>
+<span id="329">329</span>
+<span id="330">330</span>
+<span id="331">331</span>
+<span id="332">332</span>
+<span id="333">333</span>
+<span id="334">334</span>
+<span id="335">335</span>
 </pre><pre class="rust ">
 <span class="doccomment">//! Macros for persistently caching function calls</span>
 <span class="doccomment">//!</span>
@@ -510,15 +530,35 @@
 <span class="doccomment">//! has better developers. Unfortunately it lacks the &#39;persistent&#39; part and the caches cannot be</span>
 <span class="doccomment">//! shared between processes/threads, but it should be fairly easy to extend it.</span>
 <span class="doccomment">//!</span>
+<span class="attribute">#![<span class="ident">recursion_limit</span> <span class="op">=</span> <span class="string">&quot;1024&quot;</span>]</span>
 <span class="attribute">#![<span class="ident">cfg_attr</span>(<span class="ident">feature</span><span class="op">=</span><span class="string">&quot;clippy&quot;</span>, <span class="ident">feature</span>(<span class="ident">plugin</span>))]</span>
 <span class="attribute">#![<span class="ident">cfg_attr</span>(<span class="ident">feature</span><span class="op">=</span><span class="string">&quot;clippy&quot;</span>, <span class="ident">plugin</span>(<span class="ident">clippy</span>))]</span>
+<span class="attribute">#![<span class="ident">cfg_attr</span>(<span class="ident">feature</span><span class="op">=</span><span class="string">&quot;clippy&quot;</span>, <span class="ident">allow</span>(<span class="ident">redundant_closure_call</span>))]</span>
 <span class="comment">// #![feature(trace_macros)]</span>
 <span class="comment">// #![feature(log_syntax)]</span>
 <span class="attribute">#![<span class="ident">allow</span>(<span class="ident">unused_imports</span>)]</span>
 <span class="attribute">#![<span class="ident">warn</span>(<span class="ident">missing_docs</span>)]</span>
 <span class="attribute">#[<span class="ident">macro_use</span>]</span>
+<span class="kw">extern</span> <span class="kw">crate</span> <span class="ident">error_chain</span>;
+<span class="attribute">#[<span class="ident">macro_use</span>]</span>
 <span class="kw">extern</span> <span class="kw">crate</span> <span class="ident">lazy_static</span>;
 <span class="kw">extern</span> <span class="kw">crate</span> <span class="ident">bincode</span>;
+<span class="kw">extern</span> <span class="kw">crate</span> <span class="ident">redis</span>;
+<span class="kw">extern</span> <span class="kw">crate</span> <span class="ident">regex</span>;
+<span class="kw">extern</span> <span class="kw">crate</span> <span class="ident">fs2</span>;
+
+<span class="kw">mod</span> <span class="ident">errors</span> {
+    <span class="macro">error_chain</span><span class="macro">!</span>{
+        <span class="ident">foreign_links</span> {
+            <span class="ident">Redis</span>(::<span class="ident">redis</span>::<span class="ident">RedisError</span>);
+            <span class="ident">Regex</span>(::<span class="ident">regex</span>::<span class="ident">Error</span>);
+            <span class="ident">IO</span>(::<span class="ident">std</span>::<span class="ident">io</span>::<span class="ident">Error</span>);
+            <span class="ident">Bincode</span>(::<span class="ident">bincode</span>::<span class="ident">Error</span>);
+        }
+    }
+}
+
+<span class="kw">use</span> <span class="ident">errors</span>::<span class="kw-2">*</span>;
 
 <span class="attribute">#[<span class="ident">macro_use</span>]</span>
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">persistentcache</span>;
@@ -532,11 +572,11 @@
 <span class="doccomment">/// Traits which need to be implemented by any storage</span>
 <span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">PersistentCache</span> {
     <span class="doccomment">/// Return serialized value of variable</span>
-    <span class="kw">fn</span> <span class="ident">get</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>, <span class="ident">Box</span><span class="op">&lt;</span><span class="ident">std</span>::<span class="ident">error</span>::<span class="ident">Error</span><span class="op">&gt;&gt;</span>;
+    <span class="kw">fn</span> <span class="ident">get</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;&gt;</span>;
     <span class="doccomment">/// Set serialized value of variable</span>
-    <span class="kw">fn</span> <span class="ident">set</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="kw-2">&amp;</span><span class="ident">str</span>, <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">Box</span><span class="op">&lt;</span><span class="ident">std</span>::<span class="ident">error</span>::<span class="ident">Error</span><span class="op">&gt;&gt;</span>;
+    <span class="kw">fn</span> <span class="ident">set</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="kw-2">&amp;</span><span class="ident">str</span>, <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span>;
     <span class="doccomment">/// Flush storage</span>
-    <span class="kw">fn</span> <span class="ident">flush</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">Box</span><span class="op">&lt;</span><span class="ident">std</span>::<span class="ident">error</span>::<span class="ident">Error</span><span class="op">&gt;&gt;</span>;
+    <span class="kw">fn</span> <span class="ident">flush</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span>;
 }
 
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">test</span>)]</span>
@@ -548,23 +588,23 @@
     <span class="kw">use</span> <span class="ident">storage</span>::<span class="ident">redis</span>::<span class="ident">RedisStorage</span>;
     <span class="kw">use</span> <span class="ident">storage</span>::<span class="ident">file</span>::<span class="ident">FileStorage</span>;
 
-    <span class="kw">fn</span> <span class="ident">test_func_1</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Num</span> <span class="op">+</span> <span class="ident">NumCast</span><span class="op">&gt;</span>(<span class="ident">a</span>: <span class="ident">T</span>, <span class="ident">counter</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">i64</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">Box</span><span class="op">&lt;</span><span class="ident">Error</span><span class="op">&gt;&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">test_func_1</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Num</span> <span class="op">+</span> <span class="ident">NumCast</span><span class="op">&gt;</span>(<span class="ident">a</span>: <span class="ident">T</span>, <span class="ident">counter</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">i64</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
         <span class="kw-2">*</span><span class="ident">counter</span> <span class="op">+=</span> <span class="number">1</span>;
         <span class="kw">let</span> <span class="ident">ten</span>: <span class="ident">T</span> <span class="op">=</span> <span class="ident">NumCast</span>::<span class="ident">from</span>(<span class="number">10_i64</span>).<span class="ident">unwrap</span>();
         <span class="prelude-val">Ok</span>(<span class="ident">a</span> <span class="op">*</span> <span class="ident">ten</span>)
     }
 
-    <span class="kw">fn</span> <span class="ident">test_func_2</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Num</span><span class="op">&gt;</span>(<span class="ident">a</span>: <span class="ident">T</span>, <span class="ident">b</span>: <span class="ident">T</span>, <span class="ident">counter</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">i64</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">Box</span><span class="op">&lt;</span><span class="ident">Error</span><span class="op">&gt;&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">test_func_2</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Num</span><span class="op">&gt;</span>(<span class="ident">a</span>: <span class="ident">T</span>, <span class="ident">b</span>: <span class="ident">T</span>, <span class="ident">counter</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">i64</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
         <span class="kw-2">*</span><span class="ident">counter</span> <span class="op">+=</span> <span class="number">1</span>;
         <span class="prelude-val">Ok</span>(<span class="ident">a</span> <span class="op">*</span> <span class="ident">b</span>)
     }
 
-    <span class="kw">fn</span> <span class="ident">test_func_3</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Copy</span><span class="op">&gt;</span>(<span class="ident">a</span>: <span class="kw-2">&amp;</span>[<span class="ident">T</span>], <span class="ident">counter</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">i64</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>, <span class="ident">Box</span><span class="op">&lt;</span><span class="ident">Error</span><span class="op">&gt;&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">test_func_3</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Copy</span><span class="op">&gt;</span>(<span class="ident">a</span>: <span class="kw-2">&amp;</span>[<span class="ident">T</span>], <span class="ident">counter</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">i64</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;&gt;</span> {
         <span class="kw-2">*</span><span class="ident">counter</span> <span class="op">+=</span> <span class="number">1</span>;
         <span class="prelude-val">Ok</span>(<span class="macro">vec</span><span class="macro">!</span>[<span class="ident">a</span>[<span class="number">1</span>], <span class="ident">a</span>[<span class="number">0</span>]])
     }
 
-    <span class="kw">fn</span> <span class="ident">throw_error</span>() <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">Box</span><span class="op">&lt;</span><span class="ident">Error</span><span class="op">&gt;&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">throw_error</span>() <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
         <span class="prelude-val">Err</span>(
             ::<span class="ident">std</span>::<span class="ident">io</span>::<span class="ident">Error</span>::<span class="ident">new</span>(::<span class="ident">std</span>::<span class="ident">io</span>::<span class="ident">ErrorKind</span>::<span class="ident">Other</span>, <span class="string">&quot;fu&quot;</span>).<span class="ident">into</span>(),
         )
